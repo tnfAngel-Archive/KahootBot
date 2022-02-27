@@ -1,7 +1,7 @@
 {
   "name": "kahoot-bot",
   "version": "1.0.1",
-  "description": "A advanzed kahoot bot.",
+  "description": "Kahoot automated & advanced CLI bot.",
   "main": "index.ts",
   "scripts": {
     "start": "ts-node index.ts"
