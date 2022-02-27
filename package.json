@@ -6,10 +6,14 @@
   "scripts": {
     "start": "ts-node index.ts"
   },
-  "keywords": ["kahoot", "bot"],
+  "keywords": [
+    "kahoot",
+    "bot"
+  ],
   "author": "tnfAngel",
   "license": "ISC",
   "dependencies": {
-    "kahoot.js-updated": "^2.3.2"
+    "kahoot.js-updated": "^2.3.2",
+    "ts-node": "^10.5.0"
   }
 }
