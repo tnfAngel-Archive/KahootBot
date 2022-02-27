@@ -1,0 +1,15 @@
+{
+  "name": "kahoot-bot",
+  "version": "1.0.1",
+  "description": "A advanzed kahoot bot.",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
+  "keywords": ["kahoot", "bot"],
+  "author": "tnfAngel",
+  "license": "ISC",
+  "dependencies": {
+    "kahoot.js-updated": "^2.3.2"
+  }
+}
