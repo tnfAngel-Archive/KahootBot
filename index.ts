@@ -234,6 +234,7 @@ function start() {
 function stop() {
     console.log('\n');
 	log.error(`Saliendo...`);
+    readlines.pause();
 	process.exit(0);
 }
 
