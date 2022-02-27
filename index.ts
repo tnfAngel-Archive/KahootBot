@@ -37,204 +37,169 @@ function formatNumber(number: number): string {
 	return `${number}`;
 }
 
-function start() {
-	readlines.question(
-		log.question('Nombre del bot líder: '),
-		(leaderNameInput: string) => {
-			if (!leaderNameInput) {
-				log.error('No ingresaste ningún nombre del bot líder.');
-				return start();
-			}
-			readlines.question(
-				log.question('Nombre de los bots a crear: '),
-				(nameInput: string) => {
-					if (!nameInput) {
-						log.error('No ingresaste ningún nombre de los bots.');
-						return start();
-					}
-					readlines.question(
-						log.question('Número de bots a crear: '),
-						(botsInput: string) => {
-							if (!botsInput) {
-								log.error(
-									'No ingresaste ningún número de bots.'
-								);
-								return start();
-							}
+async function stdinQuestion(question: string): string {
+	return new Promise((resolve) => {
+		readlines.question(log.question(question), (input: string) =>
+			resolve(input)
+		);
+	});
+}
 
-							const bots = parseInt(botsInput);
+async function start() {
+	const leaderNameInput = await stdinQuestion('Nombre del bot líder: ');
 
-							if (isNaN(bots)) {
-								log.error(
-									'No ingresaste un número valido de bots a crear.'
-								);
-								return start();
-							}
+	if (!leaderNameInput) {
+		log.error('No ingresaste ningún nombre del bot líder.');
+		return start();
+	}
 
-							if (bots < 1) {
-								log.error('El número de bots es muy pequeño.');
-								return start();
-							}
-							readlines.question(
-								log.question('Pin de la partida: '),
-								async (pinInput: string) => {
-									if (!pinInput) {
-										log.error(
-											'No ingresaste ningún pin de la partida.'
-										);
-										return start();
-									}
+	const nameInput = await stdinQuestion('Nombre de los bots a crear: ');
 
-									const leader = new Kahoot();
+	if (!nameInput) {
+		log.error('No ingresaste ningún nombre de los bots.');
+		return start();
+	}
 
-									await wait(1000);
+	const botsInput = await stdinQuestion('Número de bots a crear: ');
 
-									const successLeaderSession = await leader
-										.join(pinInput, leaderNameInput)
-										.then(() => {
-											log.success(
-												`[LEADER] Sesión líder iniciada como ${leader.name}.`
-											);
-											return true;
-										})
-										.catch(() => {
-											log.error(
-												`[LEADER] Error intentando acceder a la sala ${pinInput} como ${leaderNameInput}.`
-											);
-											return false;
-										});
+	if (!botsInput) {
+		log.error('No ingresaste ningún número de bots.');
+		return start();
+	}
 
-									if (!successLeaderSession) return start();
+	const bots = parseInt(botsInput);
 
-									console.log(leader);
+	if (isNaN(bots)) {
+		log.error('No ingresaste un número valido de bots a crear.');
+		return start();
+	}
 
-									leader.on('QuizStart', (quiz) => {
-										log.success(
-											`[LEADER] Nuevo quiz empezado de ${quiz.questionCount} preguntas.`
-										);
-									});
+	if (bots < 1) {
+		log.error('El número de bots es muy pequeño.');
+		return start();
+	}
 
-									leader.on(
-										'QuestionReady',
-										async (question: any) => {
-											log.success(
-												`[LEADER] Nueva pregunta de ${question.numberOfChoices} respuestas.`
-											);
-										}
-									);
+	const pinInput = await stdinQuestion('Pin de la partida: ');
 
-									leader.on(
-										'QuestionStart',
-										async (question: any) => {
-											const answer = Math.floor(
-												Math.random() *
-													question.numberOfChoices
-											);
+	if (!pinInput) {
+		log.error('No ingresaste ningún pin de la partida.');
+		return start();
+	}
 
-											await question
-												.answer(answer)
-												.then(() => {
-													log.success(
-														`[LEADER] Respondiendo con número ${answer} como ${leader.name}.`
-													);
-												})
-												.catch(() => {
-													log.error(
-														`[LEADER] No he podido responder con el núimero ${answer} como ${leader.name}.`
-													);
-												});
-										}
-									);
+	const leader = new Kahoot();
 
-									leader.on(
-										'QuestionEnd',
-										async (question: any) => {
-											log.success(
-												`[LEADER] Pregunta acabada con las respuestas correctas: ${
-													question.correctChoices
-														? question.correctChoices
-																.map(
-																	(choice) =>
-																		choice +
-																		1
-																)
-																.join(', ')
-														: 'Ninguna'
-												}.`
-											);
-										}
-									);
+	await wait(1000);
 
-									leader.on('QuizEnd', (quiz) => {
-										log.success(
-											`[LEADER] Quiz acabado (${quiz.quizTitle}).`
-										);
-										stop();
-									});
-
-									for (let i = 0; i < bots; i++) {
-										const clientNumber = formatNumber(
-											i + 1
-										);
-
-										const name = `${nameInput} ${clientNumber}`;
-
-										const client = new Kahoot();
-
-										await wait(1000);
-
-										client
-											.join(pinInput, name)
-											.then(() => {
-												log.success(
-													`[SLAVE ${clientNumber}] Sesión iniciada como ${client.name}.`
-												);
-												return true;
-											})
-											.catch(() => {
-												log.error(
-													`[SLAVE ${clientNumber}] Error intentando iniciar sesión como ${name}`
-												);
-												return false;
-											});
-
-										client.on(
-											'QuestionStart',
-											async (question: any) => {
-												const answer = Math.floor(
-													Math.random() *
-														question.numberOfChoices
-												);
-
-												await question
-													.answer(answer)
-													.then(() => {
-														log.success(
-															`[SLAVE ${clientNumber}] Respondiendo con número ${answer} como ${client.name}.`
-														);
-													})
-													.catch(() => {
-														log.error(
-															`[SLAVE ${clientNumber}] No he podido responder con el número ${answer} como ${client.name}.`
-														);
-													});
-											}
-										);
-									}
-								}
-							);
-						}
-					);
-				}
+	const successLeaderSession = await leader
+		.join(pinInput, leaderNameInput)
+		.then(() => {
+			log.success(`[LEADER] Sesión líder iniciada como ${leader.name}.`);
+			return true;
+		})
+		.catch(() => {
+			log.error(
+				`[LEADER] Error intentando acceder a la sala ${pinInput} como ${leaderNameInput}.`
 			);
-		}
-	);
+			return false;
+		});
+
+	if (!successLeaderSession) return start();
+
+	console.log(leader);
+
+	leader.on('QuizStart', (quiz) => {
+		log.success(
+			`[LEADER] Nuevo quiz empezado de ${quiz.questionCount} preguntas.`
+		);
+	});
+
+	leader.on('QuestionReady', async (question: any) => {
+		log.success(
+			`[LEADER] Nueva pregunta de ${question.numberOfChoices} respuestas.`
+		);
+	});
+
+	leader.on('QuestionStart', async (question: any) => {
+		const answer = Math.floor(Math.random() * question.numberOfChoices);
+
+		await question
+			.answer(answer)
+			.then(() => {
+				log.success(
+					`[LEADER] Respondiendo con número ${answer} como ${leader.name}.`
+				);
+			})
+			.catch(() => {
+				log.error(
+					`[LEADER] No he podido responder con el núimero ${answer} como ${leader.name}.`
+				);
+			});
+	});
+
+	leader.on('QuestionEnd', async (question: any) => {
+		log.success(
+			`[LEADER] Pregunta acabada con las respuestas correctas: ${
+				question.correctChoices
+					? question.correctChoices
+							.map((choice) => choice + 1)
+							.join(', ')
+					: 'Ninguna'
+			}.`
+		);
+	});
+
+	leader.on('QuizEnd', (quiz) => {
+		log.success(`[LEADER] Quiz acabado (${quiz.quizTitle}).`);
+		stop();
+	});
+
+	for (let i = 0; i < bots; i++) {
+		const clientNumber = formatNumber(i + 1);
+
+		const name = `${nameInput} ${clientNumber}`;
+
+		const client = new Kahoot();
+
+		await wait(1000);
+
+		client
+			.join(pinInput, name)
+			.then(() => {
+				log.success(
+					`[SLAVE ${clientNumber}] Sesión iniciada como ${client.name}.`
+				);
+				return true;
+			})
+			.catch(() => {
+				log.error(
+					`[SLAVE ${clientNumber}] Error intentando iniciar sesión como ${name}`
+				);
+				return false;
+			});
+
+		client.on('QuestionStart', async (question: any) => {
+			const answer = Math.floor(Math.random() * question.numberOfChoices);
+
+			await question
+				.answer(answer)
+				.then(() => {
+					log.success(
+						`[SLAVE ${clientNumber}] Respondiendo con número ${answer} como ${client.name}.`
+					);
+				})
+				.catch(() => {
+					log.error(
+						`[SLAVE ${clientNumber}] No he podido responder con el número ${answer} como ${client.name}.`
+					);
+				});
+		});
+	}
 }
 
 function stop() {
-    console.log('\n');
+	console.log('\n');
 	log.error(`Saliendo...`);
-    readlines.pause();
+	readlines.pause();
 	process.exit(0);
 }
 
