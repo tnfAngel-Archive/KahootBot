@@ -29,7 +29,7 @@ const log = {
 	question: (message: string): string => `\x1B[1;34m[?]\x1B[1;0m ${message}`
 };
 
-const wait = (time: number) =>
+const wait = (time: number): Promise<void> =>
 	new Promise((resolve) => setTimeout(resolve, time));
 
 function formatNumber(number: number): string {
@@ -37,9 +37,9 @@ function formatNumber(number: number): string {
 	return `${number}`;
 }
 
-async function stdinQuestion(question: string): string {
-	return new Promise((resolve) => {
-		readlines.question(log.question(question), (input: string) =>
+function stdinQuestion(question: string): Promise<string> {
+	return new Promise((resolve): void => {
+		readlines.question(log.question(question), (input: string): void =>
 			resolve(input)
 		);
 	});

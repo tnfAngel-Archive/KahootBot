@@ -29,7 +29,7 @@ function formatNumber(number) {
     return `0${number}`;
   return `${number}`;
 }
-async function stdinQuestion(question) {
+function stdinQuestion(question) {
   return new Promise((resolve) => {
     readlines.question(log.question(question), (input) => resolve(input));
   });
