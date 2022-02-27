@@ -1,9 +1,3 @@
-const Kahoot = require("kahoot.js-updated");
-const readline = require("readline");
-const readlines = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
 console.log(`
 888              .d888      d8888                            888      888888b.            888    
 888             d88P"      d88888                            888      888  "88b           888    
@@ -18,6 +12,12 @@ Y88b.  888  888 888   d8888888888 888  888 Y88b 888 Y8b.     888      888   d88P
                                             "Y88P"  
     -> Kahoot Bot v1.1
 `);
+const Kahoot = require("kahoot.js-updated");
+const readline = require("readline");
+const readlines = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
 const log = {
   success: (message) => console.log(`[1;32m[+][1;0m ${message}`),
   error: (message) => console.log(`[1;31m[-][1;0m ${message}`),
@@ -30,9 +30,9 @@ function formatNumber(number) {
   return `${number}`;
 }
 function start() {
-  readlines.question(log.question("Nombre del bot lider: "), (leaderNameInput) => {
+  readlines.question(log.question("Nombre del bot l\xEDder: "), (leaderNameInput) => {
     if (!leaderNameInput) {
-      log.error("No ingresaste ning\xFAn nombre del bot lider.");
+      log.error("No ingresaste ning\xFAn nombre del bot l\xEDder.");
       return start();
     }
     readlines.question(log.question("Nombre de los bots a crear: "), (nameInput) => {
@@ -40,18 +40,18 @@ function start() {
         log.error("No ingresaste ning\xFAn nombre de los bots.");
         return start();
       }
-      readlines.question(log.question("Numero de bots a crear: "), (botsInput) => {
+      readlines.question(log.question("N\xFAmero de bots a crear: "), (botsInput) => {
         if (!botsInput) {
-          log.error("No ingresaste ning\xFAn numero de bots.");
+          log.error("No ingresaste ning\xFAn n\xFAmero de bots.");
           return start();
         }
         const bots = parseInt(botsInput);
         if (isNaN(bots)) {
-          log.error("No ingresaste un numero valido de bots a crear.");
+          log.error("No ingresaste un n\xFAmero valido de bots a crear.");
           return start();
         }
         if (bots < 1) {
-          log.error("El numero de bots es muy peque\xF1o.");
+          log.error("El n\xFAmero de bots es muy peque\xF1o.");
           return start();
         }
         readlines.question(log.question("Pin de la partida: "), async (pinInput) => {
@@ -62,7 +62,7 @@ function start() {
           const leader = new Kahoot();
           await wait(1e3);
           const successLeaderSession = await leader.join(pinInput, leaderNameInput).then(() => {
-            log.success(`[LEADER] Sesi\xF3n lider iniciada como ${leader.name}.`);
+            log.success(`[LEADER] Sesi\xF3n l\xEDder iniciada como ${leader.name}.`);
             return true;
           }).catch(() => {
             log.error(`[LEADER] Error intentando acceder a la sala ${pinInput} como ${leaderNameInput}.`);
@@ -80,9 +80,9 @@ function start() {
           leader.on("QuestionStart", async (question) => {
             const answer = Math.floor(Math.random() * question.numberOfChoices);
             await question.answer(answer).then(() => {
-              log.success(`[LEADER] Respondiendo con numero ${answer} como ${leader.name}.`);
+              log.success(`[LEADER] Respondiendo con n\xFAmero ${answer} como ${leader.name}.`);
             }).catch(() => {
-              log.error(`[LEADER] No he podido responder con el numero ${answer} como ${leader.name}.`);
+              log.error(`[LEADER] No he podido responder con el n\xFAimero ${answer} como ${leader.name}.`);
             });
           });
           leader.on("QuestionEnd", async (question) => {
@@ -101,15 +101,15 @@ function start() {
               log.success(`[SLAVE ${clientNumber}] Sesi\xF3n iniciada como ${client.name}.`);
               return true;
             }).catch(() => {
-              log.error(`[SLAVE ${clientNumber}] Error intentando iniciar sesion como ${name}`);
+              log.error(`[SLAVE ${clientNumber}] Error intentando iniciar sesi\xF3n como ${name}`);
               return false;
             });
             client.on("QuestionStart", async (question) => {
               const answer = Math.floor(Math.random() * question.numberOfChoices);
               await question.answer(answer).then(() => {
-                log.success(`[SLAVE ${clientNumber}] Respondiendo con numero ${answer} como ${client.name}.`);
+                log.success(`[SLAVE ${clientNumber}] Respondiendo con n\xFAmero ${answer} como ${client.name}.`);
               }).catch(() => {
-                log.error(`[SLAVE ${clientNumber}] No he podido responder con el numero ${answer} como ${client.name}.`);
+                log.error(`[SLAVE ${clientNumber}] No he podido responder con el n\xFAmero ${answer} como ${client.name}.`);
               });
             });
           }
@@ -119,8 +119,10 @@ function start() {
   });
 }
 function stop() {
+  console.log("\n");
   log.error(`Saliendo...`);
   process.exit(0);
 }
 start();
+readlines.on("SIGINT", () => stop());
 //# sourceMappingURL=index.js.map

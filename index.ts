@@ -1,11 +1,3 @@
-const Kahoot = require('kahoot.js-updated');
-const readline = require('readline');
-
-const readlines = readline.createInterface({
-	input: process.stdin,
-	output: process.stdout
-});
-
 console.log(`
 888              .d888      d8888                            888      888888b.            888    
 888             d88P"      d88888                            888      888  "88b           888    
@@ -20,6 +12,14 @@ Y88b.  888  888 888   d8888888888 888  888 Y88b 888 Y8b.     888      888   d88P
                                             "Y88P"  
     -> Kahoot Bot v1.1
 `);
+
+const Kahoot = require('kahoot.js-updated');
+const readline = require('readline');
+
+const readlines = readline.createInterface({
+	input: process.stdin,
+	output: process.stdout
+});
 
 const log = {
 	success: (message: string): void =>
@@ -39,10 +39,10 @@ function formatNumber(number: number): string {
 
 function start() {
 	readlines.question(
-		log.question('Nombre del bot lider: '),
+		log.question('Nombre del bot líder: '),
 		(leaderNameInput: string) => {
 			if (!leaderNameInput) {
-				log.error('No ingresaste ningún nombre del bot lider.');
+				log.error('No ingresaste ningún nombre del bot líder.');
 				return start();
 			}
 			readlines.question(
@@ -53,11 +53,11 @@ function start() {
 						return start();
 					}
 					readlines.question(
-						log.question('Numero de bots a crear: '),
+						log.question('Número de bots a crear: '),
 						(botsInput: string) => {
 							if (!botsInput) {
 								log.error(
-									'No ingresaste ningún numero de bots.'
+									'No ingresaste ningún número de bots.'
 								);
 								return start();
 							}
@@ -66,13 +66,13 @@ function start() {
 
 							if (isNaN(bots)) {
 								log.error(
-									'No ingresaste un numero valido de bots a crear.'
+									'No ingresaste un número valido de bots a crear.'
 								);
 								return start();
 							}
 
 							if (bots < 1) {
-								log.error('El numero de bots es muy pequeño.');
+								log.error('El número de bots es muy pequeño.');
 								return start();
 							}
 							readlines.question(
@@ -93,7 +93,7 @@ function start() {
 										.join(pinInput, leaderNameInput)
 										.then(() => {
 											log.success(
-												`[LEADER] Sesión lider iniciada como ${leader.name}.`
+												`[LEADER] Sesión líder iniciada como ${leader.name}.`
 											);
 											return true;
 										})
@@ -135,12 +135,12 @@ function start() {
 												.answer(answer)
 												.then(() => {
 													log.success(
-														`[LEADER] Respondiendo con numero ${answer} como ${leader.name}.`
+														`[LEADER] Respondiendo con número ${answer} como ${leader.name}.`
 													);
 												})
 												.catch(() => {
 													log.error(
-														`[LEADER] No he podido responder con el numero ${answer} como ${leader.name}.`
+														`[LEADER] No he podido responder con el núimero ${answer} como ${leader.name}.`
 													);
 												});
 										}
@@ -193,7 +193,7 @@ function start() {
 											})
 											.catch(() => {
 												log.error(
-													`[SLAVE ${clientNumber}] Error intentando iniciar sesion como ${name}`
+													`[SLAVE ${clientNumber}] Error intentando iniciar sesión como ${name}`
 												);
 												return false;
 											});
@@ -210,12 +210,12 @@ function start() {
 													.answer(answer)
 													.then(() => {
 														log.success(
-															`[SLAVE ${clientNumber}] Respondiendo con numero ${answer} como ${client.name}.`
+															`[SLAVE ${clientNumber}] Respondiendo con número ${answer} como ${client.name}.`
 														);
 													})
 													.catch(() => {
 														log.error(
-															`[SLAVE ${clientNumber}] No he podido responder con el numero ${answer} como ${client.name}.`
+															`[SLAVE ${clientNumber}] No he podido responder con el número ${answer} como ${client.name}.`
 														);
 													});
 											}
@@ -232,8 +232,11 @@ function start() {
 }
 
 function stop() {
+    console.log('\n');
 	log.error(`Saliendo...`);
 	process.exit(0);
 }
 
 start();
+
+readlines.on('SIGINT', () => stop());
