@@ -105,8 +105,6 @@ async function start() {
 
 	if (!successLeaderSession) return start();
 
-	console.log(leader);
-
 	leader.on('QuizStart', (quiz) => {
 		log.success(
 			`[LEADER] Nuevo quiz empezado de ${quiz.questionCount} preguntas.`
